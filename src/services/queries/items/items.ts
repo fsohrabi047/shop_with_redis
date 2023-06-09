@@ -1,7 +1,8 @@
-import { itemsByViewKey, itemsKey } from '$services/keys';
+import { itemsByEndingAtKey, itemsByViewKey, itemsKey } from '$services/keys';
 import { client } from '$services/redis';
 import type { CreateItemAttrs } from '$services/types';
 import { genId } from '$services/utils';
+import { attr } from 'svelte/internal';
 import { deserialize } from './deserialize';
 import { serialize } from './serialize';
 
@@ -31,7 +32,7 @@ export const getItems = async (ids: string[]) => {
     })
 };
 
-export const createItem = async (attrs: CreateItemAttrs, userId: string) => {
+export const createItem = async (attrs: CreateItemAttrs) => {
     const id = genId();
 
     const serialized = serialize(attrs);
@@ -41,6 +42,10 @@ export const createItem = async (attrs: CreateItemAttrs, userId: string) => {
         client.zAdd(itemsByViewKey(), {
             value: id,
             score: 0
+        }),
+        client.zAdd(itemsByEndingAtKey(), {
+            value: id,
+            score: attrs.endingAt.toMillis()
         })
     ]);
 
