@@ -35,7 +35,7 @@ export const withLock = async (key: string, cb: (redisClient: Client, signal: an
 				signal.expire = true;
 			}, timeoutMs);
 			const proxiedClient = buildClientProxy(timeoutMs);
-			const result = await cb(timeoutMs, signal);
+			const result = await cb(proxiedClient, signal);
 			return result;
 		} finally {
 			// Unset the locked set
