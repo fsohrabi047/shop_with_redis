@@ -14,10 +14,11 @@ services:
     depends_on:
       - redis
   redis:
-    image: 'redis:alpine'
+    image: 'redis/redis-stack:latest'
     command: 'redis-server --requirepass ${REDIS_PW}'
     ports:
       - '${REDIS_PORT:-6380}:6379'
+      - '8001:8001'
     volumes:
       - 'redis-srv:/data'
     networks:
